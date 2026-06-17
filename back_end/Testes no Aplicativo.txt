@@ -1,0 +1,22 @@
+Testes no Aplicativo:
+
+1° Teste:
+Trat: Testemunha
+Cidade: S/L
+Plantação: Cambará
+PA: 37.5
+DC: 1.24
+
+2° Teste:
+Trat: Testemunha
+Cidade: S/L
+Plantação: Cambará
+PA: 29.5
+DC: 1.43
+
+3° Teste:
+Trat: ISO-45
+Cidade: Paragominas
+Plantação: Cambará
+PA: 27.4
+DC: 3.1

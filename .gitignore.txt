@@ -1,0 +1,29 @@
+# =====================================================================
+# === REGRAS PARA O FRONTEND (Android Studio)                       ===
+# =====================================================================
+frontend/.idea/
+frontend/.gradle/
+frontend/*.iml
+frontend/build/
+frontend/*/build/
+frontend/local.properties
+frontend/.navigation/
+frontend/captures/
+
+# =====================================================================
+# === REGRAS PARA O BACKEND (Python FastAPI & Machine Learning)     ===
+# =====================================================================
+
+# 1. Ambiente Virtual e Caches do Python (NUNCA enviar)
+backend/.venv/
+backend/__pycache__/
+backend/*.pyc
+
+# 2. Cache de Ferramentas de Teste (Pytest)
+backend/.pytest_cache/
+
+# 3. Arquivos Temporários do Jupyter Notebook
+backend/.ipynb_checkpoints/
+
+# 4. Configurações locais do VS Code (Ajustes de tema, caminhos locais)
+backend/.vscode/

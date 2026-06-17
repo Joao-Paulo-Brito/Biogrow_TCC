@@ -1,0 +1,38 @@
+================================================================================
+RELATÓRIO TÉCNICO DE EVOLUÇÃO DE SOFTWARE E MODELAGEM RESTRUTURADA
+PROJETO: Aplicativo Preditivo de Qualidade de Mudas de Arroz (IQD)
+================================================================================
+
+1. CONTEXTUALIZAÇÃO DO PROBLEMA E CENÁRIO DE USO
+O projeto visa solucionar um gargalo clássico na engenharia florestal e agronomia: a avaliação da qualidade de mudas. Tradicionalmente, para medir o impacto de rizobactérias no crescimento da planta de arroz e calcular o Índice de Qualidade de Dickson (IQD), o profissional precisa realizar um processo laboratorial destrutivo. A planta é sacrificada, seca em estufa e tem seus pesos secos (PSA, PSR, PST) extraídos. 
+
+A solução proposta foi o desenvolvimento de um aplicativo móvel atuando como uma ferramenta de diagnóstico não destrutivo. O engenheiro florestal, munido de uma régua e um paquímetro, avalia a muda diretamente no campo, sem arrancá-la, e o aplicativo prediz se o impacto do tratamento será "Padrão" ou "Alto".
+
+2. A MUDANÇA DE PARADIGMA: INCLUSÃO DE VARIÁVEIS CONTÍNUAS
+Inicialmente, a inteligência artificial operava como uma estimativa pré-plantio, utilizando apenas variáveis de ambiente e tratamento (Tratamento, Cidade e Plantação). Isso limitava o poder preditivo do sistema (acurácia na faixa de 77%), pois ignorava a resposta biológica individual de cada planta.
+
+Para alinhar o software ao seu verdadeiro propósito (substituir o teste laboratorial de plantas vivas), o escopo de entrada de dados foi atualizado. Foram incorporadas duas features morfológicas fundamentais que não exigem a morte da planta:
+- PA_(CM): Comprimento da Parte Aérea.
+- Diametro_do_coleto_(mm): Espessura da base do caule.
+
+3. IMPACTO NA ENGENHARIA DO APLICATIVO (FRONT-END E BACK-END)
+A evolução do modelo de Machine Learning reverberou em toda a arquitetura do software. Na camada de interface (Front-end), a tela de formulário passou por refatorações de design. Foi necessário diminuir a quantidade de campos desnecessários e adicionar novos tipos de campos numéricos (inputs) dedicados exclusivamente à coleta ágil do "PA" e do "Diâmetro" diretamente no campo. A tela de resultados também recebeu pequenas mudanças no design para exibir o diagnóstico final com maior clareza.
+
+No Back-end, o pipeline de pré-processamento de dados em Python foi reescrito. Utilizou-se o `ColumnTransformer` do Scikit-Learn para aplicar o `OneHotEncoder` estritamente às variáveis categóricas (índices 0, 1 e 2), aplicando o parâmetro `remainder='passthrough'` para que as novas features numéricas fluíssem para o modelo de treinamento sem distorções metodológicas.
+
+4. RETREINAMENTO E EVOLUÇÃO DOS MODELOS DE MACHINE LEARNING
+A reestruturação da base de dados com as medições contínuas causou um salto imediato no desempenho de todos os classificadores avaliados no projeto:
+
+- K-Nearest Neighbors (KNN): A acurácia global subiu de 76% para 83% (K=1). O modelo conseguiu equilibrar sua matriz de confusão, estabilizando precision e recall.
+- Random Forest: A acurácia saltou de 77% para 93,46%. A análise de Importância de Features (Feature Importance) validou cientificamente a mudança de escopo do projeto: as variáveis "Diâmetro do Coleto" e "PA" assumiram o protagonismo absoluto nas decisões das árvores, superando o peso das variáveis categóricas de tratamento.
+- XGBoost (Extreme Gradient Boosting): Elevou a acurácia global de 77,48% para o estado da arte de 94,45%, com F1-Score de 0,94 e baixíssimo desvio padrão na validação cruzada (1,02%).
+
+5. TOMADA DE DECISÃO FINAL DA ARQUITETURA
+Devido à sua precisão inquestionável de 94,45%, alta imunidade à variância biológica intrínseca e eficiência no tempo de inferência, o XGBoost foi oficializado como o motor preditivo do aplicativo.
+
+Fluxo final da aplicação em produção:
+1. O usuário (engenheiro/agrônomo) insere no app (ex: Kotlin) o tipo de tratamento, local e as medidas biométricas aferidas na hora.
+2. A API em FastAPI recebe o JSON, transforma os dados via pipeline salvo em Pickle (OHE + Passthrough) e os submete ao modelo XGBoost serializado.
+3. A predição é processada em milissegundos e o diagnóstico preditivo (Impacto Alto ou Padrão) retorna ao aplicativo, concluindo a avaliação de qualidade da muda de arroz em tempo real, mitigando custos de estufa e poupando a vida da planta.
+
+================================================================================
